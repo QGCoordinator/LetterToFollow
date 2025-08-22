@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Request Letter Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        body {
+            background-color: #f5f7f9;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 8.5in;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .input-section {
+            padding: 25px;
+            background: #f9f9f9;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        .secondary-btn {
+            background: #95a5a6;
+        }
+        
+        .secondary-btn:hover {
+            background: #7f8c8d;
+        }
+        
+        .letter {
+            padding: 0.5in;
+            background: white;
+            line-height: 1.8;
+            width: 8.5in;
+            min-height: 11in;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .letter-date {
+            text-align: left;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        
+        .letter-content {
+            font-size: 16px;
+        }
+        
+        .document-list {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        
+        .signature {
+            margin-top: 60px;
+        }
+        
+        .signature-space {
+            height: 80px;
+            margin-bottom: 40px;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .document-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .document-item input {
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        .remove-btn {
+            background: #e74c3c;
+            padding: 8px 12px;
+        }
+        
+        .remove-btn:hover {
+            background: #c0392b;
+        }
+        
+        .instructions {
+            background: #fff8e1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body, html {
+                width: 8.5in;
+                height: 11in;
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+            
+            .container {
+                width: 8.5in;
+                height: 11in;
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            
+            header, .input-section, .actions {
+                display: none;
+            }
+            
+            .letter {
+                width: 8.5in;
+                height: 11in;
+                padding: 0.5in;
+                margin: 0;
+                box-shadow: none;
+            }
+        }
+
+        /* Alignment styles */
+        .letter-content p {
+            text-align: justify;
+            margin-bottom: 15px;
+        }
+        
+        .letter-content ul {
+            text-align: left;
+            margin-left: 20px;
+        }
+        
+        .letter-content .address {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+        
+        .letter-content .salutation {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        
+        .signature p {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+        
+        .signature-space {
+            width: 60%;
+            border-bottom: 1px solid #ccc;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Reservation Request Letter Generator</h1>
+            <p>Create a formal request to reserve a unit with pending documents</p>
+        </header>
+        
+        <div class="input-section">
+            <div class="instructions">
+                <p>Fill out the form below to generate a formal reservation request letter. All fields are required unless marked optional.</p>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="currentDate">Today's Date</label>
+                    <input type="date" id="currentDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dueDate">Document Submission Due Date</label>
+                    <input type="date" id="dueDate" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="buyerName">Buyer's Name</label>
+                    <input type="text" id="buyerName" placeholder="Enter buyer's full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="agentName">Agent's Name</label>
+                    <input type="text" id="agentName" placeholder="Enter agent's name" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="projectName">Project Name</label>
+                <input type="text" id="projectName" placeholder="e.g., DECA HOMES LEGANES" value="DECA HOMES LEGANES" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Missing Documents</label>
+                <div id="documentList">
+                    <div class="document-item">
+                        <input type="text" placeholder="Document name" class="doc-input" value="Buyer’s Verification Sheet (BVS) for both Co-Borrower (COBO) and Principal Borrower (PB)">
+                        <button class="remove-btn secondary-btn">×</button>
+                    </div>
+                    <div class="document-item">
+                        <input type="text" placeholder="Document name" class="doc-input" value="PSA Birth Certificate for the Co-Borrower (COBO)">
+                        <button class="remove-btn secondary-btn">×</button>
+                    </div>
+                    <div class="document-item">
+                        <input type="text" placeholder="Document name" class="doc-input" value="Financial Literacy Certificate (FINLIT) for both Co-Borrower (COBO) and Principal Borrower (PB)">
+                        <button class="remove-btn secondary-btn">×</button>
+                    </div>
+                    <div class="document-item">
+                        <input type="text" placeholder="Document name" class="doc-input" value="Certified True Copy of Payslip & Certificate of Employment (CTC) for both Co-Borrower (COBO) and Principal Borrower (PB)">
+                        <button class="remove-btn secondary-btn">×</button>
+                    </div>
+                </div>
+                <button type="button" id="addDocument" class="secondary-btn" style="margin-top: 10px;">+ Add Another Document</button>
+            </div>
+            
+            <div class="actions">
+                <button type="button" id="printBtn" class="secondary-btn">Print Letter</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="letter" id="letterOutput">
+        <div class="letter-date" id="outputDate"></div>
+        
+        <div class="letter-content">
+            <div class="address">
+                <p>MS. IRIS GOLDA A. ABELLANA<br>
+                Branch General Manager for ILOILO<br>
+                8990 Housing Development Corporation<br>
+                Corner Texas Mabini St., Iloilo City</p>
+            </div>
+            
+            <p class="salutation">Dear Ms. Abellana,</p>
+            
+            <p>I am writing to formally request the reservation of a unit at <span id="outputProject">DECA HOMES LEGANES</span>.</p>
+            
+            <p>I acknowledge that the following required documents are currently lacking:</p>
+            
+            <ul class="document-list" id="outputDocuments">
+                <li>Buyer’s Verification Sheet (BVS) for both Co-Borrower (COBO) and Principal Borrower (PB)</li>
+                <li>PSA Birth Certificate for the Co-Borrower (COBO)</li>
+                <li>Financial Literacy Certificate (FINLIT) for both Co-Borrower (COBO) and Principal Borrower (PB)</li>
+                <li>Certified True Copy of Payslip & Certificate of Employment (CTC) for both Co-Borrower (COBO) and Principal Borrower (PB)</li>
+            </ul>
+            
+            <p>I commit to submitting all outstanding documents on or before <span id="outputDueDate"></span>.</p>
+            
+            <p>I understand that failure to meet this deadline will result in the automatic cancellation of my reservation and the forfeiture of all payments made in favor of the developer.</p>
+            
+            <p>Thank you for your consideration.</p>
+            
+            <div class="signature">
+                <p>Sincerely,</p>
+                <div class="signature-space"></div>
+                <p><strong id="outputBuyer">[Buyer Name]</strong><br>
+                Buyer</p>
+                
+                <div style="margin-top: 40px;"></div>
+                <div class="signature-space"></div>
+                <p>Agent: <span id="outputAgent">[Agent Name]</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date as default
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0];
+            document.getElementById('currentDate').value = formattedDate;
+            
+            // Set due date to 30 days from now as default
+            const dueDate = new Date();
+            dueDate.setDate(today.getDate() + 30);
+            const formattedDueDate = dueDate.toISOString().split('T')[0];
+            document.getElementById('dueDate').value = formattedDueDate;
+            
+            // Update output with initial values
+            updateOutput();
+            
+            // Add event listeners to all remove buttons
+            document.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const documentList = document.getElementById('documentList');
+                    if (documentList.children.length > 1) {
+                        documentList.removeChild(this.parentElement);
+                    }
+                    updateOutput();
+                });
+            });
+            
+            // Add document field
+            document.getElementById('addDocument').addEventListener('click', function() {
+                const documentList = document.getElementById('documentList');
+                const newDocument = document.createElement('div');
+                newDocument.className = 'document-item';
+                newDocument.innerHTML = `
+                    <input type="text" placeholder="Document name" class="doc-input">
+                    <button class="remove-btn secondary-btn">×</button>
+                `;
+                documentList.appendChild(newDocument);
+                
+                // Add event listener to remove button
+                newDocument.querySelector('.remove-btn').addEventListener('click', function() {
+                    documentList.removeChild(newDocument);
+                    updateOutput();
+                });
+                
+                // Add input event to update the letter
+                newDocument.querySelector('.doc-input').addEventListener('input', updateOutput);
+            });
+            
+            // Print letter
+            document.getElementById('printBtn').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Auto-update output when any input changes
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    updateOutput();
+                });
+            });
+            
+            function updateOutput() {
+                const currentDate = document.getElementById('currentDate').value;
+                const dueDate = document.getElementById('dueDate').value;
+                const buyerName = document.getElementById('buyerName').value;
+                const agentName = document.getElementById('agentName').value;
+                const projectName = document.getElementById('projectName').value;
+                
+                // Format dates
+                const formattedCurrentDate = currentDate ? new Date(currentDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '[Date]';
+                const formattedDueDate = dueDate ? new Date(dueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '[Due Date]';
+                
+                // Update output elements
+                document.getElementById('outputDate').textContent = formattedCurrentDate;
+                document.getElementById('outputDueDate').textContent = formattedDueDate;
+                document.getElementById('outputBuyer').textContent = buyerName || '[Buyer Name]';
+                document.getElementById('outputAgent').textContent = agentName || '[Agent Name]';
+                document.getElementById('outputProject').textContent = projectName;
+                
+                // Get and update documents
+                const docInputs = document.querySelectorAll('.doc-input');
+                const documentsList = document.getElementById('outputDocuments');
+                documentsList.innerHTML = '';
+                
+                docInputs.forEach(input => {
+                    if (input.value.trim() !== '') {
+                        const li = document.createElement('li');
+                        li.textContent = input.value;
+                        documentsList.appendChild(li);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
